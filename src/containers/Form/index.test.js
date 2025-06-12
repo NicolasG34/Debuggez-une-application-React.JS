@@ -14,6 +14,7 @@ describe("When Events is created", () => {
         it("the success action is called", async () => {
             const onSuccess = jest.fn()
             render(<Form onSuccess={onSuccess} />)
+
             fireEvent(
                 await screen.findByTestId("button-test-id"),
                 new MouseEvent("click", {
@@ -21,16 +22,14 @@ describe("When Events is created", () => {
                     bubbles: true,
                 }),
             )
+
             await screen.findByText("En cours")
-            // Attendre un certain temps pour que l'opération asynchrone 
-            // de la fonction mockContactApi() se termine pour vérifier 
-            // que la fonction onSuccess() et appelée
-            setTimeout(() => {
-                screen.findByText("Envoyer");
+
+            await waitFor(() => {
                 expect(onSuccess).toHaveBeenCalled()
-            }, 1500)  
+            })
+
+            await screen.findByText("Envoyer") 
         })
     })
-    
-    
 })
