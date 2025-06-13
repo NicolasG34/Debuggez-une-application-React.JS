@@ -42,7 +42,7 @@ const EventList = () => {
             onChange={(value) => value ? changeType(value) : changeType(null)}
           />
           <div id="events" className="ListContainer">
-            {filteredEvents.map((event) => {
+            {(filteredEvents || []).map((event) => {
               if (!event.cover || !event.title || !event.date) return null; // sécurité
               return (
                 <Modal key={event.id} Content={<ModalEvent event={event} />}>

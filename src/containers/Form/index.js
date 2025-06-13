@@ -4,22 +4,18 @@ import Field, { FIELD_TYPES } from "../../components/Field"
 import Select from "../../components/Select"
 import Button, { BUTTON_TYPES } from "../../components/Button"
 
-const mockContactApi = () =>
-    new Promise((resolve) => {
-        setTimeout(resolve, 1000)
-    })
+const mockContactApi = () => Promise.resolve()
 
 const Form = ({ onSuccess, onError }) => {
     const [sending, setSending] = useState(false)
+
     const sendContact = useCallback(
         async (evt) => {
             evt.preventDefault()
             setSending(true)
-            // We try to call mockContactApi
             try {
                 await mockContactApi()
                 setSending(false)
-                // On appelle la fonction onSuccess() si l'envoi passe bien
                 onSuccess()
             } catch (err) {
                 setSending(false)
@@ -28,6 +24,7 @@ const Form = ({ onSuccess, onError }) => {
         },
         [onSuccess, onError],
     )
+
     return (
         <form onSubmit={sendContact}>
             <div className="row">
@@ -49,6 +46,7 @@ const Form = ({ onSuccess, onError }) => {
                     >
                         {sending ? "En cours" : "Envoyer"}
                     </Button>
+                    {/* Message supprimé ici */}
                 </div>
                 <div className="col">
                     <Field
