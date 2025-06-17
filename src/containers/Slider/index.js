@@ -1,55 +1,59 @@
 import { useEffect, useState } from "react";
 import { useData } from "../../contexts/DataContext";
 import { getMonth } from "../../helpers/Date";
+
 import "./style.scss";
 
 const Slider = () => {
   const { data } = useData();
   const [index, setIndex] = useState(0);
 
-  const events = data?.focus?.slice().sort((a, b) => new Date(a.date) - new Date(b.date)) || [];
+  // Trie les événements du plus récent au plus ancien
+  const byDateDesc = data?.focus
+    ?.slice()
+    .sort((evtA, evtB) => new Date(evtB.date) - new Date(evtA.date)) || [];
 
-  // Auto-slide effect
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIndex((prevIndex) => (prevIndex + 1) % events.length);
+      setIndex((prevIndex) =>
+        prevIndex < byDateDesc.length - 1 ? prevIndex + 1 : 0
+      );
     }, 5000);
-    return () => clearTimeout(timer);
-  }, [index, events.length]);
 
-  if (!events.length) return null;
+    return () => clearTimeout(timer); // Nettoie le timer à chaque changement
+  }, [index, byDateDesc.length]);
 
   return (
     <div className="SlideCardList">
-      {events.map((event, idx) => (
-        <div
-          key={event.id}
-          className={`SlideCard SlideCard--${index === idx ? "display" : "hide"}`}
-        >
-          <img src={event.cover} alt={event.title} />
-          <div className="SlideCard__descriptionContainer">
-            <div className="SlideCard__description">
-              <h3>{event.title}</h3>
-              <p>{event.description}</p>
-              <div>{getMonth(new Date(event.date))}</div>
+      {byDateDesc.map((event, idx) => (
+        <div key={event.id ?? idx}>
+          <div
+            className={`SlideCard SlideCard--${index === idx ? "display" : "hide"}`}
+          >
+            <img src={event.cover} alt={event.title} />
+            <div className="SlideCard__descriptionContainer">
+              <div className="SlideCard__description">
+                <h3>{event.title}</h3>
+                <p>{event.description}</p>
+                <div>{getMonth(new Date(event.date))}</div>
+              </div>
+            </div>
+          </div>
+          <div className="SlideCard__paginationContainer">
+            <div className="SlideCard__pagination">
+              {byDateDesc.map((e, radioIdx) => (
+                <input
+                  key={`pagination-${e.id ?? radioIdx}`}
+                  type="radio"
+                  name="radio-button"
+                  checked={index === radioIdx}
+                  readOnly
+                />
+              ))}
             </div>
           </div>
         </div>
       ))}
-
-      <div className="SlideCard__paginationContainer">
-        <div className="SlideCard__pagination">
-          {events.map((event, radioIdx) => (
-            <input
-              key={event.id}
-              type="radio"
-              name="slider-pagination"
-              checked={index === radioIdx}
-              onChange={() => setIndex(radioIdx)}
-            />
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
