@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -33,20 +34,22 @@ export const DataProvider = ({ children }) => {
     getData();
   }, [data, getData]);
 
-  // ✅ Calcul de l'événement le plus récent
-  const last = data?.focus
-    ?.slice()
-    .sort((a, b) => new Date(b.date) - new Date(a.date))[0] || null;
+  const last = useMemo(
+  () =>
+    data?.focus
+      ?.slice()
+      .sort((a, b) => new Date(b.date) - new Date(a.date))[0] || null,
+  [data]
+);
+
+  const contextValue = useMemo(() => ({
+    data,
+    error,
+    last,
+  }), [data, error, last]);
 
   return (
-    <DataContext.Provider
-      // eslint-disable-next-line react/jsx-no-constructed-context-values
-      value={{
-        data,
-        error,
-        last, // ✅ Ajout de last ici
-      }}
-    >
+    <DataContext.Provider value={contextValue}>
       {children}
     </DataContext.Provider>
   );
@@ -59,4 +62,3 @@ DataProvider.propTypes = {
 export const useData = () => useContext(DataContext);
 
 export default DataContext;
-
