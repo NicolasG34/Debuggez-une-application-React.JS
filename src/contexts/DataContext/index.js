@@ -34,19 +34,11 @@ export const DataProvider = ({ children }) => {
     getData();
   }, [data, getData]);
 
-  const last = useMemo(
-  () =>
-    data?.focus
-      ?.slice()
-      .sort((a, b) => new Date(b.date) - new Date(a.date))[0] || null,
-  [data]
-);
 
   const contextValue = useMemo(() => ({
     data,
     error,
-    last,
-  }), [data, error, last]);
+  }), [data, error]);
 
   return (
     <DataContext.Provider value={contextValue}>
