@@ -8,10 +8,10 @@ const Slider = () => {
   const { data } = useData();
   const [index, setIndex] = useState(0);
 
-  // Trie du plus ancien au plus récent
+  // Trie du plus récent au plus ancien
   const byDateAsc = data?.focus
     ? [...data.focus].sort((evtA, evtB) =>
-        new Date(evtA.date) - new Date(evtB.date)
+        new Date(evtB.date) - new Date(evtA.date)
       )
     : [];
 
